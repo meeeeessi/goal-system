@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wang.goal.mapper.PermMapper">
+
+    <resultMap id="RolePermResult" type="Role">
+        <result property="id"    column="ROLE_ID"    />
+        <result property="name"    column="ROLE_NAME"    />
+        <!--权限信息-->
+        <collection property="permissions" javaType="list" ofType="Permission">
+            <result property="id" column="PERM_ID"></result>
+            <result property="name" column="PERM_NAME"></result>
+            <result property="url" column="PERM_URL"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllPermInfo" resultMap="RolePermResult">
+        SELECT tr.ID ROLE_ID, tr.NAME ROLE_NAME, tp.ID PERM_ID, tp.NAME PERM_NAME, tp.URL PERM_URL FROM tbl_role tr LEFT JOIN tbl_role_perm trp ON tr.ID=trp.ROLE_ID LEFT JOIN tbl_permission tp ON trp.PERM_ID=tp.ID
+    </select>
+
+    <update id="updatePermInfo" parameterType="Permission">
+        update tbl_permission
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">NAME = #{name},</if>
+            <if test="url != null">URL = #{url},</if>
+        </trim>
+        where ID = #{id};
+    </update>
+
+    <delete id="deleteRoleInfoById">
+        delete from tbl_role where ID = ${roleId}
+    </delete>
+
+    <delete id="deletePermInfoById">
+        delete from tbl_permission where ID = ${permId}
+    </delete>
+
+    <delete id="deleteRolePermInfoById">
+        delete from tbl_role_perm where ROLE_ID = ${roleId} AND PERM_ID = ${permId}
+    </delete>
+
+</mapper>

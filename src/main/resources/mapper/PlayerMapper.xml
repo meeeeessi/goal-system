@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wang.goal.mapper.PlayerMapper">
+
+    <resultMap type="Player" id="PlayerResult">
+        <result property="id"    column="ID"    />
+        <result property="name"    column="NAME"    />
+        <result property="team"    column="TEAM"    />
+        <result property="grade"    column="GRADE"    />
+        <result property="age"    column="AGE"    />
+        <result property="height"    column="HEIGHT"    />
+        <result property="weight"    column="WEIGHT"    />
+        <result property="birthday"    column="BIRTHDAY"    />
+        <result property="nationality"    column="NATIONALITY"    />
+        <result property="value"    column="VALUE"    />
+        <result property="position"    column="POSITION"    />
+        <result property="number"    column="NUMBER"    />
+        <result property="description"    column="DESCRIPTION"    />
+    </resultMap>
+
+    <select id="showAllPlayerData" resultMap="PlayerResult">
+        SELECT ID,NAME,TEAM,GRADE,DESCRIPTION,NUMBER FROM
+            (
+                SELECT tp.ID ID,tp.NAME NAME,tp.TEAM TEAM,tp.GRADE GRADE,tp.DESCRIPTION DESCRIPTION,COUNT(*) NUMBER
+                FROM tbl_player tp
+                WHERE EXISTS (
+                              SELECT tup.ID FROM tbl_user_player tup WHERE tup.USER_ID=#{userId} AND tup.PLAYER_ID=tp.ID
+                          )
+                GROUP BY tp.ID
+                UNION
+                SELECT tp.ID ID,tp.NAME NAME,tp.TEAM TEAM,tp.GRADE GRADE,tp.DESCRIPTION DESCRIPTION,COUNT(null) NUMBER
+                FROM tbl_player tp
+                WHERE NOT EXISTS (
+                        SELECT tup.ID FROM tbl_user_player tup WHERE tup.USER_ID=#{userId} AND tup.PLAYER_ID=tp.ID
+                    )
+                GROUP BY tp.ID
+            ) as tbl_unity
+        ORDER BY ID
+    </select>
+
+    <select id="queryAllPlayerData" resultMap="PlayerResult">
+        SELECT ID,NAME,TEAM,GRADE,AGE,VALUE,NUMBER FROM tbl_player
+    </select>
+
+    <insert id="attentionPlayer">
+        insert into tbl_user_player
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">USER_ID,</if>
+            <if test="playerId != null">PLAYER_ID,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="playerId != null">#{playerId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePlayerInfo" parameterType="Player">
+        UPDATE tbl_player
+        SET NAME=#{name},TEAM=#{team},AGE=#{age},VALUE=#{value},NUMBER=#{number}
+        WHERE ID=#{id}
+    </update>
+
+    <delete id="deletePlayerInfo">
+        delete from tbl_player where ID = #{id}
+    </delete>
+
+    <delete id="deleteAttentionPlayer">
+        delete from tbl_user_player where USER_ID = #{userId} and PLAYER_ID = #{playerId}
+    </delete>
+
+</mapper>

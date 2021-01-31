@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wang.goal.mapper.TeamMapper">
+
+    <resultMap type="Team" id="TeamResult">
+        <result property="id"    column="ID"    />
+        <result property="name"    column="NAME"    />
+        <result property="grade"    column="GRADE"    />
+        <result property="point"    column="POINT"    />
+        <result property="value"    column="VALUE"    />
+        <result property="leagueType"    column="LEAGUE_TYPE"    />
+        <result property="birthday"    column="BIRTHDAY"    />
+        <result property="address"    column="ADDRESS"    />
+        <result property="homeField"    column="HOME_FIELD"    />
+        <result property="chiefCoach"    column="CHIEF_COACH"    />
+        <result property="captain"    column="CAPTAIN"    />
+        <result property="description"    column="DESCRIPTION"    />
+    </resultMap>
+
+    <select id="showAllTeamData" resultMap="TeamResult">
+        SELECT ID,GRADE,DESCRIPTION,NAME,POINT,VALUE,CAPTAIN FROM
+            (
+                SELECT tt.ID ID,tt.GRADE GRADE,tt.DESCRIPTION DESCRIPTION,tt.NAME NAME,tt.POINT POINT,tt.VALUE VALUE,COUNT(*) CAPTAIN
+                FROM tbl_team tt
+                WHERE EXISTS (
+                    SELECT tut.ID FROM tbl_user_team tut WHERE tut.USER_ID=#{email} AND tut.TEAM_ID=tt.ID
+                    )
+                GROUP BY tt.ID
+                UNION
+                SELECT tt.ID ID,tt.GRADE GRADE,tt.DESCRIPTION DESCRIPTION,tt.NAME NAME,tt.POINT POINT,tt.VALUE VALUE,COUNT(tt.CAPTAIN) CAPTAIN
+                FROM tbl_team tt
+                WHERE NOT EXISTS (
+                    SELECT tut.ID FROM tbl_user_team tut WHERE tut.USER_ID=#{email} AND tut.TEAM_ID=tt.ID
+                    )
+                GROUP BY tt.ID
+            ) as tbl_unity
+        ORDER BY GRADE
+    </select>
+
+    <select id="queryAllTeamData" resultMap="TeamResult">
+        SELECT ID,NAME,LEAGUE_TYPE,BIRTHDAY,ADDRESS,HOME_FIELD FROM tbl_team
+    </select>
+
+    <insert id="attentionTeam">
+        insert into tbl_user_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">USER_ID,</if>
+            <if test="teamId != null">TEAM_ID,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="teamId != null">#{teamId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeamInfo" parameterType="Team">
+        update tbl_team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">NAME = #{name},</if>
+            <if test="leagueType != null">LEAGUE_TYPE = #{leagueType},</if>
+            <if test="birthday != null">BIRTHDAY = #{birthday},</if>
+            <if test="address != null">ADDRESS = #{address},</if>
+            <if test="homeField != null">HOME_FIELD = #{homeField},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteTeamInfo">
+        delete from tbl_team where ID = #{id}
+    </delete>
+
+    <delete id="deleteAttentionTeam">
+        delete from tbl_user_team where USER_ID = #{userId} and TEAM_ID = #{teamId}
+    </delete>
+
+</mapper>
