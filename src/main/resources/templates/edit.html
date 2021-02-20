@@ -387,42 +387,21 @@
 
                 <!-- Page Heading -->
                 <h1 class="h3 mb-1 text-gray-800" style="text-align: center">
-                    <div class="t-ctn">
-                        <div class="s-ctn">
-                            <div>
-                                <img src="../static/img/logo/fc1.png"><br>
-                                巴塞罗纳
-                            </div>
-                            <div>
-                                欧冠1/4决赛<br>
-                                77 - 0<br>
-                                已结束<br>
-                            </div>
-                            <div>
-                                <img src="../static/img/logo/fc3.png"><br>
-                                拜仁慕尼黑
-                            </div>
-                        </div>
-
-                    </div>
-
+                    新闻编辑
                 </h1>
 
-                <!-- Content Row -->
-                <div class="row">
+                <br>
 
-                    <!-- Border Left Utilities -->
-                    <div class="col-lg-6" th:each="news : ${newsList}">
-
-                        <div class="card mb-4 py-3 border-left-warning">
-                            <div class="card-body" th:text="${news.title}">
-                                <!--.border-left-warning-->
-                            </div>
-                        </div>
-
+                <form class="user" th:action="@{/news/insertNews}" th:method="post">
+                    <div class="form-group">
+                        标题：<input class="form-control form-control-user" id="title" name="title">
                     </div>
-
-                </div>
+                    <div class="form-group">
+                        内容：<input class="form-control form-control-user" id="content1" name="content1">
+                    </div>
+                    <br>
+                    <input type="submit" value="发布" class="btn btn-primary btn-user btn-block">
+                </form>
 
             </div>
             <!-- End of Begin Page Content -->

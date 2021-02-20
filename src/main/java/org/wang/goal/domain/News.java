@@ -6,6 +6,7 @@ public class News {
     private Integer id;
     private String title;
     private String authorId;
+    private String email;
     private Timestamp publishTime;
     private String content;
 
@@ -31,6 +32,14 @@ public class News {
 
     public void setAuthorId(String authorId) {
         this.authorId = authorId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Timestamp getPublishTime() {

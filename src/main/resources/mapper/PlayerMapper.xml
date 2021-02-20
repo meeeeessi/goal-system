@@ -19,16 +19,16 @@
     </resultMap>
 
     <select id="showAllPlayerData" resultMap="PlayerResult">
-        SELECT ID,NAME,TEAM,GRADE,DESCRIPTION,NUMBER FROM
+        SELECT ID,NAME,TEAM,GRADE,VALUE,DESCRIPTION,NUMBER FROM
             (
-                SELECT tp.ID ID,tp.NAME NAME,tp.TEAM TEAM,tp.GRADE GRADE,tp.DESCRIPTION DESCRIPTION,COUNT(*) NUMBER
+                SELECT tp.ID ID,tp.NAME NAME,tp.TEAM TEAM,tp.GRADE GRADE,tp.VALUE VALUE,tp.DESCRIPTION DESCRIPTION,COUNT(*) NUMBER
                 FROM tbl_player tp
                 WHERE EXISTS (
                               SELECT tup.ID FROM tbl_user_player tup WHERE tup.USER_ID=#{userId} AND tup.PLAYER_ID=tp.ID
                           )
                 GROUP BY tp.ID
                 UNION
-                SELECT tp.ID ID,tp.NAME NAME,tp.TEAM TEAM,tp.GRADE GRADE,tp.DESCRIPTION DESCRIPTION,COUNT(null) NUMBER
+                SELECT tp.ID ID,tp.NAME NAME,tp.TEAM TEAM,tp.GRADE GRADE,tp.VALUE VALUE,tp.DESCRIPTION DESCRIPTION,COUNT(null) NUMBER
                 FROM tbl_player tp
                 WHERE NOT EXISTS (
                         SELECT tup.ID FROM tbl_user_player tup WHERE tup.USER_ID=#{userId} AND tup.PLAYER_ID=tp.ID

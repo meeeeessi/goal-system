@@ -6,6 +6,7 @@
         <result property="id"    column="ID"    />
         <result property="title"    column="TITLE"    />
         <result property="authorId"    column="AUTHOR_ID"    />
+        <result property="email"    column="EMAIL"    />
         <result property="publishTime"    column="PUBLISH_TIME"    />
         <result property="content"    column="CONTENT"    />
     </resultMap>
@@ -17,6 +18,10 @@
     <select id="selectAllPermInfo" resultMap="NewsResult">
         SELECT tn.ID ID,tn.TITLE TITLE,tu.NAME AUTHOR_ID,SUBSTR(tn.PUBLISH_TIME FROM 1 FOR 19) PUBLISH_TIME FROM tbl_news tn LEFT JOIN tbl_user tu ON tn.AUTHOR_ID=tu.ID
     </select>
+
+    <insert id="insertNews">
+        INSERT INTO tbl_news (TITLE,EMAIL,PUBLISH_TIME,CONTENT) VALUES (#{title},#{email},#{publishTime},#{content})
+    </insert>
 
     <update id="updateNewsInfo">
         UPDATE tbl_news tn

@@ -10,6 +10,7 @@ import java.util.List;
 public interface NewsMapper {
     List<News> selectAllNews();
     List<News> selectAllPermInfo();
+    void insertNews(News news);
     void updateNewsInfo(String id,String title, String name, Timestamp publishTime);
     void deleteNewsInfo(String id);
 }

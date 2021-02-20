@@ -26,6 +26,11 @@ public class NewsServiceImpl implements INewsService {
     }
 
     @Override
+    public void insertNews(News news) {
+        newsMapper.insertNews(news);
+    }
+
+    @Override
     public void updateNewsInfo(String id,String title, String name, Timestamp publishTime) {
         newsMapper.updateNewsInfo(id,title,name,publishTime);
     }

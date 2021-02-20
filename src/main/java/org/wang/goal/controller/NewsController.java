@@ -11,6 +11,7 @@ import org.wang.goal.domain.News;
 import org.wang.goal.service.INewsService;
 import org.wang.goal.utils.DateUtil;
 
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.util.List;
 
@@ -31,6 +32,17 @@ public class NewsController {
     public String newsManagement(Model model){
         model.addAttribute("allNewsInfoList",newsServiceImpl.selectAllPermInfo());
         return "news-management";
+    }
+
+    @PostMapping("/insertNews")
+    public String insertNews(@RequestParam("title") String title, @RequestParam("content1") String content1, HttpSession session){
+        News news=new News();
+        news.setTitle(title);
+        news.setEmail(session.getAttribute("emailToken").toString());
+        news.setPublishTime(DateUtil.getCurrentDate());
+        news.setContent(content1);
+        newsServiceImpl.insertNews(news);
+        return "redirect:/com/homePage";
     }
 
     //新闻修改
